@@ -34,7 +34,7 @@
 
 
 ### 1. Ref / Reactive × Props / Emit
-[▶ sample code]()
+[▶ sample code](https://github.com/a-nakashima-seta/VueWork/tree/main/%E7%AC%AC2%E5%9B%9E/codes/src/components/PropsEmit)
 
 Vueアプリケーションにおける最も基本的な状態管理の方法が、「**Props ダウン、Emit アップ**」という考え方です。<br>
 親コンポーネントから子コンポーネントへは **`props`** を使ってデータを渡し、子から親へは **`emit` を使ってイベントを発火し、データの変更を通知**します。
@@ -48,7 +48,7 @@ Vueアプリケーションにおける最も基本的な状態管理の方法�
 <br>
 
 ### 2. Provide / Inject
-[▶ sample code]()
+[▶ sample code](https://github.com/a-nakashima-seta/VueWork/tree/main/%E7%AC%AC2%E5%9B%9E/codes/src/components/ProvideInject)
 
 `provide` と `inject` は、**親コンポーネントから離れた子孫コンポーネントへ状態を共有する**ための仕組みです。<br>
 深い階層のコンポーネントに直接データを渡すことができるため、「propsのバケツリレー問題」を解消する手段として有効です。
@@ -67,7 +67,7 @@ Vueアプリケーションにおける最も基本的な状態管理の方法�
 ### 3. Pinia
 [▶ pinia公式🍍](https://pinia.vuejs.org/)
 
-[▶ sample code]()
+[▶ sample code](https://github.com/a-nakashima-seta/VueWork/tree/main/%E7%AC%AC2%E5%9B%9E/codes/src/components/ProvideInject)
 
 
 `Pinia` は、Vueアプリケーションのための **公式の状態管理ライブラリ** です。
