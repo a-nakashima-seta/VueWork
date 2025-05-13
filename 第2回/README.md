@@ -11,7 +11,7 @@
 
 <br>
 
-### Vueの状態管理について
+# Vueの状態管理について
 #### 【そもそも状態管理って何？】<br>
 **「アプリの中で変化するデータの値を、ちゃんと整理して覚えておく仕組み」**のことです。<br>
 データを整理しておくことで、「複数コンポーネントで同じデータを共有する」ことが容易に実現できるようになり、コードの見晴らしもよくなります。
@@ -26,13 +26,13 @@
 
 <br>
 
-### 【Vueにおけるコンポーネント間の状態管理】<br>
-1. Props/Emit
-2. Provide/Inject
+### 【Vueにおけるコンポーネント間の状態管理手法】<br>
+1. Ref(Reactive) × Props / Emit
+2. Provide / Inject
 3. Pinia
 
 
-### 1. Ref / Reactive × Props / Emit
+### 1. Ref(Reactive) × Props / Emit
 [▶ sample code](https://github.com/a-nakashima-seta/VueWork/tree/main/%E7%AC%AC2%E5%9B%9E/codes/src/components/PropsEmit)
 
 Vueアプリケーションにおける最も基本的な状態管理の方法が、「**Props ダウン、Emit アップ**」という考え方です。<br>
@@ -196,7 +196,7 @@ PiniaはVueのリアクティブシステムに完全に統合されており、
 
 
 
-## v-model の理解を深める
+# v-model の理解を深める
 
 ### 「Vueらしさ」を支える根幹の仕組み
 
