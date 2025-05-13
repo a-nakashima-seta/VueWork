@@ -2,7 +2,7 @@
 
 ![Vue アイキャッチ](../vue.png "Vue アイキャッチ")
 
-[▶ Vue Play Ground](https://play.vuejs.org/#eNp9kUFLwzAUx7/KM5cqzBXR0+gGKgP1oKKCl1xG99ZlpklIXuag9Lv7krK5w9it7//7v/SXthP3zo23EcVEVKH2yhEEpOhm0qjWWU/QgccV9LDytoWCq4U00tTWBII2NDBN/LJ4Qq0tfFuvlxfFlTRVORzHB/FA2Dq9IOQJoFrfzLouL/d9VfKUU2VcJNhet3aJeioFcymgZFiVR/tiJCjw61eqGW+CNWzepX0pats6pdG/OVKsJ8UEMklswXa/LzkjH3G0z+s11j8n8k3YpUyKd48B/RalODBa+AZpwPPPV9zx8wGyfdTcPgM/MFgdk+NQe4hmydpHvWz7nL+/Ms1XmO8ITdhfKommZp/7UvA/eTxz9X/d2/Fd3pOmF/0fEx+nNQ==)
+[▶ Vue Play Ground](https://play.vuejs.org/)
 
 ## 今回取り扱う内容
 ・Vueの状態管理の選択肢について<br>
@@ -34,6 +34,7 @@
 
 
 ### 1. Ref / Reactive × Props / Emit
+[▶ sample code]()
 
 Vueアプリケーションにおける最も基本的な状態管理の方法が、「**Props ダウン、Emit アップ**」という考え方です。<br>
 親コンポーネントから子コンポーネントへは **`props`** を使ってデータを渡し、子から親へは **`emit` を使ってイベントを発火し、データの変更を通知**します。
@@ -47,6 +48,7 @@ Vueアプリケーションにおける最も基本的な状態管理の方法�
 <br>
 
 ### 2. Provide / Inject
+[▶ sample code]()
 
 `provide` と `inject` は、**親コンポーネントから離れた子孫コンポーネントへ状態を共有する**ための仕組みです。<br>
 深い階層のコンポーネントに直接データを渡すことができるため、「propsのバケツリレー問題」を解消する手段として有効です。
@@ -56,8 +58,153 @@ Vueアプリケーションにおける最も基本的な状態管理の方法�
 #### ⚠️ 注意点
 
 * `inject` で受け取ったデータは基本的にリアクティブではないため、**状態の変化に応じて再レンダリングさせたい場合は、`ref` や `reactive` を使って渡す必要があります**。
-* 双方向バインディングには対応していないため、**子孫コンポーネントから状態を直接変更することは推奨されません**。
+* 双方向バインディングには対応していないため、**子孫コンポーネントから状態を直接変更することは推奨されません**（技術的には可能）。
 * 親と子孫の**依存関係が不透明になりやすく、可読性が低下する**可能性があるため、設計には注意が必要です。
+
+
+<br>
+
+### 3. Pinia
+[▶ pinia公式🍍](https://pinia.vuejs.org/)
+
+[▶ sample code]()
+
+
+`Pinia` は、Vueアプリケーションのための **公式の状態管理ライブラリ** です。
+
+#### ✅ Pinia のユースケース
+
+* グローバルで共有する状態（ユーザー情報、認証状態、テーマ設定など）
+* 複数コンポーネント間でのリアクティブなデータのやりとりが必要な場合
+* ローカルステートだけでは管理が煩雑になる中〜大規模なアプリケーション
+
+#### 🚀 Pinia の導入方法
+
+1. **インストール**
+
+```bash
+npm install pinia
+```
+
+2. **メインエントリで Pinia を登録**
+
+```ts
+// main.ts
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import App from './App.vue'
+
+const app = createApp(App)
+app.use(createPinia())
+app.mount('#app')
+```
+
+3. **ストアの定義**
+
+```ts
+// stores/counter.ts
+import { defineStore } from 'pinia'
+
+export const useCounterStore = defineStore('counter', {
+  state: () => ({
+    count: 0
+  }),
+  actions: {
+    increment() {
+      this.count++
+    }
+  }
+})
+```
+
+4. **ストアの利用**
+
+```vue
+<script setup lang="ts">
+import { useCounterStore } from '@/stores/counter'
+
+const counter = useCounterStore()
+</script>
+
+<template>
+  <button @click="counter.increment">
+    カウント: {{ counter.count }}
+  </button>
+</template>
+```
+
+---
+
+#### 💡 Tips: Piniaで分割代入を使う方法
+
+piniaでは分割代入が使えないとされていましたが、`storeToRefs()`という機能を使用することによって呼び出し元で分割代入を使用するk所とができるようになります。
+
+```ts
+// ストアの記述
+import { defineStore, storeToRefs } from "pinia";
+import { ref } from "vue";
+
+const useCounterStore = defineStore('counter', () => {
+    const count = ref<number>(0)
+    const increment = () => {
+        count.value++
+    }
+    const decrement = () => {
+        count.value++
+    }
+    return { count, increment, decrement }
+})
+
+// 下記でexportすることで呼び出し元で分割代入が使用可能になる
+export default () => {
+    const $store = useCounterStore()
+    return { ...$store, ...storeToRefs($store) }
+}
+```
+
+```ts
+// 呼び出し元のコンポーネント内の記述
+const store = useUserDataStore()
+const { count, increment, decrement } = store
+```
+
+---
+
+### ⚠️Provide/injectという機能がありながら、なぜPiniaが必要なのか？
+#### 1. 拡張性
+`provide/inject`は親から子へデータや関数を渡すのに便利ですが、あくまで依存注入の仕組みであり、**グローバルな**状態管理ツールではありません。Piniaはアプリ全体で状態を共有管理するための スケーラブルな仕組みが整備されています。
+#### 2. リアクティビティ
+`provide/inject`ではリアクティブなデータの更新が手動でやや面倒です。更新検知もVueのリアクティビティシステムに直接乗らないケースもあります。<br>
+PiniaはVueのリアクティブシステムに完全に統合されており、再レンダリングや監視が自然に行えるようになっています。
+
+
+
+### 状態管理のまとめ
+アプリケーション内のデータ管理は決まった正解はないため、状況に応じて土の手法を選択すべきかを判断するコヨが重要である。下記は状態管理手法の判断基準の一例である。
+
+| 状況                         | 推奨手法                 |
+| -------------------------- | -------------------- |
+| 単純な親子間のデータ受け渡しをしたい         | `Ref / Props / Emit` |
+| 何層にもわたってデータを渡したいがバケツリレーは避けたい    | `Provide / Inject`   |
+| ・グローバルに共通する状態（認証情報など）を管理したい<br>・グローバルかつリアクティブなデータを扱う | `Pinia`              |
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
